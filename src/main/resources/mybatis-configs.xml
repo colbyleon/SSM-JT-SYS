@@ -13,10 +13,11 @@
         <package name="com.jt.common.vo"/>
     </typeAliases>
     <!-- 映射表 已配置自动映射-->
-    <!--<mappers>
+    <mappers>
     	<mapper resource="mapper/sys/SysRoleMapper.xml"/>
         <mapper resource="mapper/sys/SysUserMapper.xml"/>
         <mapper resource="mapper/sys/SysUserRoleMapper.xml"/>
-    </mappers>-->
+        <mapper resource="mapper/sys/SysMenuMapper.xml"/>
+    </mappers>
    
 </configuration>

@@ -1,44 +1,126 @@
 <div class="row">
-	<div class="col-xs-12">
-		<div class="box">
-			<div class="box-header">
-				<h3 class="box-title">菜单管理</h3>
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">菜单管理</h3>
 
-				<div class="box-tools">
-					<div class="input-group input-group-sm" style="width: 100px;">
-						<div class="input-group-btn">
-						
-							<button type="button" 
-							class="btn btn-default btn-delete">删除</button>
-							<button type="button" class="btn btn-default btn-add">添加</button>
-							<button type="button" class="btn btn-default btn-update">修改</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<!-- /.box-header -->
-		<div class="box-body table-responsive no-padding">
-          <table id="menuTable" class="table table-hover">
-        	<thead>
-	        <tr>
-		      <th data-field="selectItem" data-checkbox="true"></th>
-	        </tr>
-	     </thead>
-         </table>
-        </div>
+                <div class="box-tools">
+                    <div class="input-group input-group-sm" style="width: 100px;">
+                        <div class="input-group-btn">
 
-			<!-- /.box-body -->
-			<div id="pageId" class="box-footer clearfix">
+                            <button type="button"
+                                    class="btn btn-default btn-delete">删除
+                            </button>
+                            <button type="button" class="btn btn-default btn-add">添加</button>
+                            <button type="button" class="btn btn-default btn-update">修改</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-		</div>
-		<!-- /.box -->
-	</div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table id="menuTable" class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th data-field="selectItem" data-checkbox="true"></th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+
+
+        </div>
+        <!-- /.box -->
+    </div>
 </div>
 <script type="text/javascript" src="bower_components/treegrid/jquery.treegrid.extension.js"></script>
 <script type="text/javascript" src="bower_components/treegrid/jquery.treegrid.min.js"></script>
 <script type="text/javascript" src="bower_components/treegrid/tree.table.js"></script>
 <script type="text/javascript">
-	
+    /**
+     * 初始化表格的列
+     */
+    var colunms = [
+        {
+            field: 'selectItem',
+            radio: true
+        },
+        {
+            title: '菜单ID',
+            field: 'id',
+            visible: false,
+            align: 'center',
+            valign: 'middle',
+            width: '80px'
+        },
+        {
+            title: '菜单名称',
+            field: 'name',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+            width: '130px'
+        },
+        {
+            title: '上级菜单',
+            field: 'parentName',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+            width: '130px'
+        },
+        {
+            title: '类型',
+            field: 'type',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+            width: '70px',
+            formatter: function (item, index) {
+                if (item.type == 1) {
+                    return '<span class="label label-success">菜单</span>';
+                }
+                if (item.type == 2) {
+                    return '<span class="label label-warning">按钮</span>';
+                }
+            }
+        },
+        {
+            title: '排序号',
+            field: 'sort',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+            width: '70px'
+        },
+        {
+            title: '菜单URL',
+            field: 'url',
+            align: 'center',
+            valign: 'middle',
+            sortable: true,
+            width: '160px'
+        },
+        {
+            title: '授权标识',
+            field: 'permission',
+            align: 'center',
+            valign: 'middle',
+            sortable: true
+        }];
+    $(document).ready(function () {
+        doGetObjects();
+    })
+    function doGetObjects() {
+        // 构建table对象
+        var table = new TreeTable(
+            "menuTable",                // tableId
+            "menu/doFindObjects.do",    // url
+            colunms);                   // colunms
+        // 初始化table对象（底层发ajax异步请求）
+        table.setExpandColumn(2);
+        table.init();
+    }
 </script>
 
 

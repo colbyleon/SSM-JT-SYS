@@ -23,7 +23,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <link rel="stylesheet" href="dist/css/skins/skin-blue.min.css">
     <link rel="stylesheet" href="bower_components/layer/skin/default/layer.css">
     <link rel="stylesheet" href="bower_components/ztree/css/metroStyle/metroStyle.css"/>
-
+    <link rel="stylesheet" href="bower_components/treegrid/jquery.treegrid.css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -394,21 +394,8 @@ desired effect
 <script src="dist/js/adminlte.min.js"></script>
 <script type="text/javascript">
     $(function () {
-        /*// 角色管理点击注册
-        $("#load-role-id").click(function () {
-            $(".container-fluid").load("role/listUI.do", function () {
-                // 面板加载完成后要清空面板上的缓存
-                $(".container-fluid").removeData();
-            });
-        });
-        // 用户管理点击注册
-        $("#load-user-id").click(function () {
-            $(".container-fluid").load("user/listUI.do", function () {
-                // 面板加载完成后要清空面板上的缓存
-                $(".container-fluid").removeData();
-            });
-        });*/
-        $(".treeview-menu").on("click", "#load-role-id,#load-user-id,#load-menu-id", loadPage)
+        $(".treeview-menu")
+            .on("click", "#load-role-id,#load-user-id,#load-menu-id", loadPage)
     });
 
     function loadPage() {

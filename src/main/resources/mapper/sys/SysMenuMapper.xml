@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.sys.dao.SysMenuDao">
+    <!-- 默认开启的一级缓存是SqlSession级别，只能在同一次请求中缓存数据 -->
+    <!-- 开启二级缓存 SqlSessionFactory级别 ，可以在全局缓存数据-->
+    <!-- 所有insert、delete、update操作commit后清空缓存 -->
+    <cache readOnly="true"/>
+
+    <select id="findObjects" resultType="map">
+        <!-- 方案一 -->
+        <!--select
+          a.*,
+          b.name parentName
+        from jt_sys.sys_menus a
+        left join jt_sys.sys_menus b on a.parentId = b.id*/ -->
+
+        <!-- 方案二 -->
+        select c.*,(select p.name
+                    from jt_sys.sys_menus p
+                    where c.parentId = p.id) parentName
+        from jt_sys.sys_menus c
+    </select>
+
+
+</mapper>
