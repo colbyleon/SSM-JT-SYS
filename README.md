@@ -3,11 +3,16 @@
 
 客户端技术:
 1)HTML,CSS,JS
+
 2)Bootstrap,AdminLTE,JQuery,Ajax
+
 
 服务端技术:
 1)CoreJava,Jdbc,Servlet
+
 2)Spring,SpringMVC,MyBatis,Shiro,DRUID,FastJson,Jackson,Log4j,...
 
+
 数据库:
+
 1)MySql
