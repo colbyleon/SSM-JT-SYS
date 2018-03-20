@@ -1,0 +1,240 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">角色管理</h3>
+
+                <div class="box-tools">
+                    <div class="input-group input-group-sm" style="width: 350px;">
+                        <input type="text" name="table_search" id="searchNameId"
+                               class="form-control pull-right" placeholder="角色名">
+
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-delete">删除</button>
+                            <button type="button" class="btn btn-default btn-add">添加</button>
+                            <!-- <button type="button" class="btn btn-default btn-update">修改</button> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" name="checkAll" id="checkAllId">全选</input></th>
+                        <th>名字</th>
+                        <th>备注</th>
+                        <th>创建时间</th>
+                        <th>修改时间</th>
+                        <th>创建用户</th>
+                        <th>修改用户</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyId">
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.box-body -->
+            <div id="pageId" class="box-footer clearfix"></div>
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(function () {
+        <!-- 这里是局部方法，方法不能写在这里，不然其它方法调用不到了，这个是一个方法只会执行一次-->
+        $("#pageId").load("pageUI.do", function () {
+            // 异步加载服务端数据然后进行呈现
+            doGetObjects();
+        });
+        // doGetObjects(); 不能写在这里，有可能产生线程安全问题
+
+        /*使用on注册事件的好处：后加载的页面还没加载完成也可以注册点事件*/
+        // 注册点击事件
+        $(".input-group-btn")
+            .on("click", ".btn-search", doQueryObjects)
+            .on("click", ".btn-delete", doDeleteObject)
+            .on("click", ".btn-add", doLoadEditUI);
+
+        // 注册全选按钮
+        $(".table-hover").on("click", "#checkAllId", checkAllId)
+        // 单选影响全选
+        $("#tbodyId")
+            .on("click", "input[name='checkItem']", doChangeCheckBox)
+            .on("click", "button",doLoadEditUI)
+
+        /* 在函数后面加括号代表注册事件时就执行函数
+        $(".input-group-btn").on("click",".btn-search",doQueryObjects()); */
+    });
+
+
+
+    // 跳到编辑页面
+    function doLoadEditUI() {
+        var title;
+        var id = $(this).val();
+        // 编辑页面用于添加和修改共用
+        if ($(this).hasClass("btn-add")) {
+            title = "角色添加";
+        } else {
+            title = "角色修改";
+            var roleDate = $(this).parents("tr").data("roleDate");
+            $(".container-fluid").data("roleData",roleDate);
+        }
+        var url = "role/editUI.do";
+        // 在主页中替换了role_list
+        $(".container-fluid").load(url, function () {
+            // 页面加载完成后设置标题
+            $(".box-title").html(title);
+            var roleDate = $(".container-fluid").data("roleData");
+            if(roleDate){
+                $("#nameId").val(roleDate.name);
+                $("#noteId").val(roleDate.note);
+            }
+        });
+    }
+
+
+    // 执行删除操作
+    function doDeleteObject() {
+        // 1. 获取选中的id
+        var ids = doGetCheckedIds();
+        // 1) 没有选中给出提示
+        if (ids.length == 0) {
+            alert("请至少选择一个");
+            return;
+            // 2) 选中多个给出提示
+        } else if (ids.length > 1) {
+            alert("只能选择一个进行删除")
+            return;
+        }
+        // 2. 发异步post请求根据id删除数据
+        var url = "role/doDeleteObject.do";
+        var params = {"id": ids[0]}
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+                alert(result.message);
+                // 删除后重新刷新
+                $("tbody").find("input[value='" + ids[0] + "']").parents("tr").remove();
+
+                /* 需要重新访问数据库，影响性能
+                doGetObjects(); */
+            } else {
+                alert(result.message);
+            }
+        })
+        // $.post
+    }
+
+    // 获取选中的id
+    function doGetCheckedIds() {
+        // 定义一个数组用于存储被选中的id值
+        var arr = new Array();//[]
+        // 获取所有的checkbox
+        $("#tbodyId input[type='checkbox']")
+            .each(function () {//回调函数
+                if ($(this).prop("checked")) {
+                    arr.push($(this).val());
+                }
+            });
+        return arr;
+    }
+
+    <!-- 搜索 -->
+    function doQueryObjects() {
+        // 1. 获取表单数据（name）
+        // 2. 将数据异步提交到服务端进行查询
+        // 3. 呈现查询结果（当前页数据，分页数据）
+        $("#pageId").data("pageCurrent", 1);
+        doGetObjects();
+    }
+
+    <!-- 不能写在页面加载完成后的方法中 -->
+    function doGetObjects() {
+        //1.向服务端发起异步请求
+        var url = "role/doFindPageObjects.do";
+        var pageCurrent = $("#pageId").data("pageCurrent");
+        if (!pageCurrent) pageCurrent = 1;
+        var params = {"pageCurrent": pageCurrent};
+        var name = $("#searchNameId").val();
+        // 直接给对象加属性
+        params.name = name;
+        <!-- 和服务交互的关键步骤 -->
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+                // 更新数据表格
+                setTableBodyRows(result.data.records);
+                // 更新分页数据
+                // 方法在page页
+                setPagination(result.data);
+            } else {
+                alert(result.message);
+            }
+        });
+        //2.通过响应结果更新页面
+    }
+
+    function setTableBodyRows(records) {
+        // 1. 获取tbody对象，并清空原有内容
+        var tBody = $("#tbodyId");
+        tBody.empty();
+        // 2. 迭代数据，取出数据并进行填充
+        for (var i in records) {
+            var tr = $("<tr></tr>");
+            // 将此行的数据绑定到tr对象上，更新的时间取比较方便
+            tr.data("roleDate",records[i]);
+            // 创建tds
+            var tds = createTds(records[i]);
+            // 将tds放入tr中
+            tr.append(tds);
+            tBody.append(tr);
+        }
+    }
+
+    // 创建tds的方法
+    function createTds(row) {
+        var tds = "<td><input type='checkbox' name='checkItem' value='" + row.id + "' </td>" +
+            "<td>" + row.name + "</td>" +
+            "<td>" + row.note + "</td>" +
+            "<td>" + row.createdTime + "</td>" +
+            "<td>" + row.modifiedTime + "</td>" +
+            "<td>" + row.createdUser + "</td>" +
+            "<td>" + row.modifiedUser + "</td>" +
+            "<td><button type='button' class='btn btn-default' value='" + row.id + "'>修改</button></td>";
+        return tds;
+    }
+
+    // 全选事件
+    function checkAllId() {
+        var flag = $(this).prop("checked");
+        $("#tbodyId input[type='checkbox']").each(function () {
+            $(this).prop("checked", flag);
+        });
+    }
+
+    function doChangeCheckBox() {
+        var flag = true;
+        $("#tbodyId input[name='checkItem']").each(function () {
+            flag &= $(this).prop("checked");
+        });
+        $("#checkAllId").prop("checked", flag);
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

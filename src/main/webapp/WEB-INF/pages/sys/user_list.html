@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">用户管理</h3>
+
+                <div class="box-tools">
+                    <div class="input-group input-group-sm" style="width: 350px;">
+                        <input type="text" name="table_search" id="searchNameId"
+                               class="form-control pull-right" placeholder="用户名">
+
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default btn-search">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            <button type="button" class="btn btn-default btn-add">添加</button>
+                            <button type="button" class="btn btn-default btn-update">修改</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th style="padding-left: 20px">选择</th>
+                        <th>用户名</th>
+                        <th>邮箱</th>
+                        <th>手机号</th>
+                        <th>状态</th>
+                        <th>创建时间</th>
+                        <th>修改时间</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbodyId"></tbody>
+                </table>
+            </div>
+            <div id="pageId" class="box-footer clearfix">
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        // 页面加载开始加载数据
+        var url = "pageUI.do";
+        $("#pageId").load(url, function () {
+            doGetObjects();
+        });
+
+        // 注册搜索、添加、修改等点击事件
+        $(".input-group-btn")
+            .on("click", ".btn-search", doQueryObjects)
+            .on("click", ".btn-update", doUpdateObject)
+            .on("click", ".btn-add", doLoadEditUI)
+
+        // 用户选择复选框事件
+        $("#tbodyId")
+            .on("click", "button", doValidById)
+    })
+
+    // 禁用或启用
+    function doValidById() {
+        // 1. 获取对象id，validId
+        var tr = $(this).parents("tr");
+        var user = tr.data("user");
+        var id = user.id;
+        var valid = user.valid;
+        user.valid = valid ? 0 : 1;
+        // 状态变更后将缓存数据存回去
+        tr.data("user", user);
+        // 2. 构建usl,参数对象
+        var url = "user/doValidById.do";
+        var params = {
+            "id": id,
+            "valid": valid ? 0 : 1
+        }
+        // 3. 发送异步请求，更新数据
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+//                alert(result.message);
+//                console.log(valid)
+                // 操作成功后更新页面
+                tr.find("td:eq(4)").html(valid ? "禁用" : "启用");
+                tr.find("td:last button").html(valid ? "启用" : "禁用");
+            } else {
+                alert(result.message);
+            }
+        })
+    }
+
+    // 加载数据到pageId
+    function doGetObjects() {
+        var url = "user/doFindPageObjects.do";
+        var pageCurrent = $("#pageId").data("pageCurrent");
+        if (!pageCurrent) {
+            pageCurrent = 1;
+        }
+        var username = $("#searchNameId").val()
+        var params = {username: username, pageCurrent: pageCurrent};
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+                // 加载用户信息
+                setTableBodyRows(result.data.records);
+                // 加载页码信息
+                setPagination(result.data);
+            } else {
+                alert(result.message);
+            }
+        })
+
+    }
+
+    // 加载用户数据到表格
+    function setTableBodyRows(records) {
+        // 加载用户表之前先清空
+        $("#tbodyId").empty();
+        // 遍历所有用户信息
+        $.each(records, function (i, user) {
+            var tr = $("<tr></tr>");
+            var tds = createTds(user);
+            // 将信息存入tr中，更新时取出
+            tr.data("user", user);
+//            console.log(tr)
+            tr.append(tds);
+            $("#tbodyId").append(tr);
+        })
+    }
+
+    // 创建单行用户信息
+    function createTds(user) {
+        var status = user.valid == 1 ? "启用" : "禁用";
+        var bStatus = user.valid == 0 ? "启用" : "禁用";
+        var tds = "<td style='padding-left: 25px'>" +
+            "<input type='radio' name='userInfo' value='" + user.id + "'/></td>" +
+            "<td>" + user.username + "</td>" +
+            "<td>" + user.email + "</td>" +
+            "<td>" + user.mobile + "</td>" +
+            "<td>" + status + "</td>" +
+            "<td>" + user.createdTime + "</td>" +
+            "<td>" + user.modifiedTime + "</td>" +
+            "<td><button type='button'>" + bStatus + "</button></td>";
+        return tds;
+    }
+
+    // 点击搜索事件
+    function doQueryObjects() {
+        // 搜索时先设置页码为1
+        $("#pageId").data("pageCurrent", 1);
+        doGetObjects();
+    }
+
+
+    // 修改
+    function doUpdateObject() {
+        // 获取需要修改的用户id
+        var id = $("#tbodyId input[type='radio']:checked").val();
+        // 没有选中的用户则返回
+        if(!id)return;
+        var user = $("#tbodyId input[value='" + id + "']").parents("tr").data("user");
+        // 将数据存入到面板
+        $(".container-fluid").data("user", user);
+        doLoadEditUI();
+
+    }
+
+    // 打开编辑页面，更新和添加
+    function doLoadEditUI() {
+
+        // 标题设置
+        var title;
+        var user;
+        if ($(this).hasClass("btn-add")) {
+            title = "添加用户";
+        } else {
+            title = "修改用户";
+            // 取出用户数据
+            user = $(".container-fluid").data("user");
+        }
+        var url = "user/editUI.do"
+
+        // 加载编辑页面
+        $(".container-fluid").load(url, function () {
+            $(".box-title").html(title);
+            // 如果是修改则提取tr的缓存数据到输入框中，并将数据缓存到面板中
+            if (user) {
+                $("#usernameId").val(user.username);
+                $("#passwordId").val(user.password);
+                $("#emailId").val(user.email);
+                $("#phoneId").val(user.mobile);
+            }
+        });
+
+
+    }
+
+</script>
+
+
+
+
+

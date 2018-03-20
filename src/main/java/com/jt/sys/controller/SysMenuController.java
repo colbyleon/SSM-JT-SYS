@@ -1,0 +1,16 @@
+package com.jt.sys.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+
+@Controller
+@RequestMapping("/menu/")
+public class SysMenuController {
+
+    @RequestMapping("listUI")
+    public String listUI(){
+        return "sys/menu_list";
+    }
+}
+

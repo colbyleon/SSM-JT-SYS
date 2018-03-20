@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+		<!-- mybatis控制台LOG输出 -->
+        <setting name="logImpl" value="log4j" />
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+    <!-- 别名 -->
+    <typeAliases>
+    	<package name="com.jt.sys.entity"/>
+        <package name="com.jt.common.vo"/>
+    </typeAliases>
+    <!-- 映射表 已配置自动映射-->
+    <!--<mappers>
+    	<mapper resource="mapper/sys/SysRoleMapper.xml"/>
+        <mapper resource="mapper/sys/SysUserMapper.xml"/>
+        <mapper resource="mapper/sys/SysUserRoleMapper.xml"/>
+    </mappers>-->
+   
+</configuration>

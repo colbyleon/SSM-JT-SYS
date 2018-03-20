@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jt.sys.dao.SysUserDao">
+    <!-- 默认开启的一级缓存是SqlSession级别，只能在同一次请求中缓存数据 -->
+    <!-- 开启二级缓存 SqlSessionFactory级别 ，可以在全局缓存数据-->
+    <!-- 所有insert、delete、update操作commit后清空缓存 -->
+    <cache readOnly="true"/>
+
+    <!-- 动态sql，使用sql定义页面中的共性sql元素 -->
+    <sql id="QueryWhere">
+
+        <!-- 会智能删除一些没用的sql,也会智能添加一些逗号什么的 -->
+        <where>
+            <if test="username!=null and username!='' ">
+                username like concat("%",#{username},"%")
+            </if>
+        </where>
+    </sql>
+
+    <!-- 分页查询角色 -->
+    <select id="findPageObjects" resultType="sysUser">
+        select * from sys_users
+        <include refid="QueryWhere"/>
+        limit ${startIndex},${pageSize}
+    </select>
+
+    <!-- 查询角色的总数量 -->
+    <select id="getRowCount" resultType="int">
+        select count(id) from sys_users
+        <include refid="QueryWhere"/>
+    </select>
+
+    <!-- 禁用和启用状态信息 -->
+    <update id="validById">
+        update sys_users
+        set valid = #{valid},
+        modifiedUser = #{modifiedUser},
+        modifiedTime = now()
+        where id = #{id}
+    </update>
+
+    <!-- 插入一个角色
+         需要返回主键值赋值给对象-->
+    <insert id="insertObject" parameterType="sysUser"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into sys_users
+        (id,username,password,salt,email,mobile,
+        valid,createdTime,modifiedTime,createdUser,modifiedUser)
+        values
+        (null,#{username},#{password},#{salt},#{email},#{mobile},
+        #{valid},now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
+
+    <!-- 更新一个角色 -->
+    <update id="updateObject" parameterType="sysUser">
+        update sys_users
+        <set>
+            <if test="username!=null and username!=''">
+                username =#{username},
+            </if>
+            <!-- 密码和盐值要一起改 -->
+            <if test="password!=null and password != ''">
+                password = #{password},
+                salt = #{salt},
+            </if>
+            <if test="email != null and email != ''">
+                email = #{email},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                mobile = #{mobile},
+            </if>
+            modifiedTime =now(),
+            <if test="modifiedUser!=null and name!=''">
+                modifiedUser =#{modifiedUser}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 根据用户id查询用户信息 -->
+    <select id="findObjectById" resultType="sysUser">
+        select *
+        from jt_sys.sys_users
+        where id=#{id}
+    </select>
+</mapper>
