@@ -18,6 +18,7 @@
         <mapper resource="mapper/sys/SysUserMapper.xml"/>
         <mapper resource="mapper/sys/SysUserRoleMapper.xml"/>
         <mapper resource="mapper/sys/SysMenuMapper.xml"/>
+        <mapper resource="mapper/sys/SysRoleMenuMapper.xml"/>
     </mappers>
    
 </configuration>

@@ -48,7 +48,7 @@
         {
             title: '菜单ID',
             field: 'id',
-            visible: false,
+            visible: 'false',
             align: 'center',
             valign: 'middle',
             width: '80px'
@@ -108,9 +108,6 @@
             valign: 'middle',
             sortable: true
         }];
-    $(document).ready(function () {
-        doGetObjects();
-    })
     function doGetObjects() {
         // 构建table对象
         var table = new TreeTable(
@@ -120,7 +117,96 @@
         // 初始化table对象（底层发ajax异步请求）
         table.setExpandColumn(2);
         table.init();
+
     }
+
+    // 加载完成后
+    $(document).ready(function () {
+        // 加载数据
+        doGetObjects();
+        // 注册点击
+        $(".input-group-btn")
+            .on("click",".btn-delete",doDeleteObject)
+            .on("click",".btn-add",doLoadEditUI)
+            .on("click",".btn-update",doUpdateObject)
+    })
+
+    // 加载编辑页面
+    function doLoadEditUI() {
+        var title = "修改菜单";
+        if($(this).hasClass("btn-add")){
+            title = "添加菜单";
+        }
+        var url = "menu/editUI.do";
+        $(".container-fluid").load(url,function () {
+            $(".box-title").html(title);
+            initEdit();
+        })
+    }
+
+    function doUpdateObject() {
+        var id = getSelectedId();
+        if(!id){
+            alert("请选择一个菜单");
+            return;
+        }
+        var tr = $("#menuTable input:checked").parents("tr");
+        var menu ={
+            id:id,
+            name:tr.find("td:eq(2)").text(),
+            parentName:tr.find("td:eq(3)").html(),
+            type:tr.find("td:eq(4) span").html()=="菜单"?1:2,
+            sort:tr.find("td:eq(5)").html(),
+            url:tr.find("td:eq(6)").html(),
+            permission:tr.find("td:eq(7)").html(),
+        }
+        $(".container-fluid").data("menu",menu);
+        doLoadEditUI();
+    }
+    function initEdit() {
+        var menu = $(".container-fluid").data("menu");
+        if(!menu)return;
+        // 类型按钮
+        $(".form-horizontal input[name='typeId'][value='" + menu.type + "']").prop("checked", true);
+        $("#nameId").val(menu.name);
+        $("#parentId").val(menu.parentName);
+        $("#urlId").val(menu.url);
+        $("#permissionId").val(menu.permission);
+        $("#sortId").val(menu.sort);
+
+
+        var parentId;
+        // 注意：上级菜单只设置了名字，用于存储的id值需要存入到缓存中,否则父级id会存错
+
+    }
+
+    function getSelectedId() {
+        // 1. 获取选中的记录，默认返回一个对象数组
+        //      treeGrid插件内部定义的jquery函数
+        //      getSelections为扩展函数内部要调用的一个方法
+        var selections = $("#menuTable").bootstrapTreeTable("getSelections");
+        // 2. 对记录进行判定
+        if(selections.length) return selections[0].id;
+    }
+
+    function doDeleteObject(){
+        //var menuId = $("#menuTable input:checked").parents("td").next().html();
+        var menuId = getSelectedId();
+        if(!menuId){
+            alert("请选择菜单");return;
+        }
+        var url = "menu/doDeleteObject.do"
+        $.post(url,{"menuId":menuId},function (result) {
+            if(result.state == 1) {
+                alert(result.message);
+                $("#menuTable input:checked").parents("tr").remove();
+            }else {
+                alert(result.message);
+            }
+
+        })
+    }
+
 </script>
 
 

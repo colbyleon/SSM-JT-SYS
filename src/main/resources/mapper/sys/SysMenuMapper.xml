@@ -23,5 +23,32 @@
         from jt_sys.sys_menus c
     </select>
 
+    <!-- 根据ID判断是否有子菜单 -->
+    <select id="getChileCount" resultType="int">
+        select count(id)
+        from jt_sys.sys_menus
+        where parentId = #{menuId}
+    </select>
+
+    <!-- 根据ID删除一个菜单 -->
+    <delete id="deleteObject">
+        delete from jt_sys.sys_menus
+        where id = #{menuId}
+    </delete>
+
+    <!-- 基于dao中方法定义查询元素 -->
+    <select id="findZtreeMenuNodes" resultType="node">
+        select id,name,parentId
+        from jt_sys.sys_menus
+    </select>
+
+    <!-- 插入一个菜单 -->
+    <insert id="insertObject" parameterType="sysMenu">
+        insert into jt_sys.sys_menus
+        (name, url, type, sort, note, parentId, permission,
+        createdTime, modifiedTime, createdUser, modifiedUser)
+        values (#{name},#{url},#{type},#{sort},#{note},#{parentId},#{permission},
+        now(),now(),#{createdUser},#{modifiedUser})
+    </insert>
 
 </mapper>

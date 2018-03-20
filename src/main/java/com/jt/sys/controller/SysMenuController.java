@@ -1,6 +1,8 @@
 package com.jt.sys.controller;
 
 import com.jt.common.vo.JsonResult;
+import com.jt.common.vo.Node;
+import com.jt.sys.entity.SysMenu;
 import com.jt.sys.service.SysMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,11 +29,42 @@ public class SysMenuController {
         return "sys/menu_list";
     }
 
+    /**
+     * @return 菜单编辑页面
+     */
+    @RequestMapping("editUI")
+    public String editUI(){
+        return "sys/menu_edit";
+    }
+
     @RequestMapping("doFindObjects")
     @ResponseBody
     public JsonResult doFindObjects() {
         List<Map<String, Object>> map = sysMenuService.findObjects();
         JsonResult jsonResult = new JsonResult(map, "query ok");
+        return jsonResult;
+    }
+
+    @RequestMapping("doDeleteObject")
+    @ResponseBody
+    public JsonResult doDeleteObject(Integer menuId){
+        String message = sysMenuService.deleteObject(menuId);
+        JsonResult jsonResult = new JsonResult(message);
+        return jsonResult;
+    }
+    @RequestMapping("doFindZtreeMenuNodes")
+    @ResponseBody
+    public JsonResult doFindZtreeMenuNodes(){
+        List<Node> nodes = sysMenuService.findZtreeMenuNodes();
+        JsonResult jsonResult = new JsonResult(nodes, "Query Ok");
+        return jsonResult;
+    }
+
+    @RequestMapping("doInsertObject")
+    @ResponseBody
+    public JsonResult doInsertObject(SysMenu entity) {
+        String message = sysMenuService.insertObject(entity);
+        JsonResult jsonResult = new JsonResult(message);
         return jsonResult;
     }
 }
