@@ -27,4 +27,14 @@ public interface SysMenuService {
      * 插入一个菜单
      */
     String insertObject(SysMenu entity);
+
+    /**
+     * 根据id查找一个菜单
+     */
+    SysMenu findObjectById(Integer id);
+
+    /**
+     * 根据id更新一个菜单
+     */
+    String updateObject(SysMenu entity);
 }

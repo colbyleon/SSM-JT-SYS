@@ -9,9 +9,30 @@
     <cache readOnly="true"/>
 
     <!-- 根据菜单id删除数据 -->
-    <delete id="deleteObjectsByMenuId" >
+    <delete id="deleteObjectsByMenuId">
         delete from jt_sys.sys_role_menus
         where menu_id = #{menuId}
     </delete>
 
+    <!-- 根据角色id删除数据 -->
+    <delete id="deleteObjectsByRoleId">
+        delete from jt_sys.sys_role_menus
+        where role_id = #{roleId}
+    </delete>
+
+    <!-- 根据角色id插入多个关系数据 -->
+    <insert id="insertObjectsByRoleId">
+        insert into jt_sys.sys_role_menus
+        values
+        <foreach collection="menuIds" item="menuId" separator=",">
+            (null,#{roleId},#{menuId})
+        </foreach>
+    </insert>
+
+    <!-- 根据角色id查找对应的菜单id -->
+    <select id="findRoleMenu" resultType="int">
+        select menu_id
+        from jt_sys.sys_role_menus
+        where role_id = #{roleId}
+    </select>
 </mapper>

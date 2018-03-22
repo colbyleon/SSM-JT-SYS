@@ -31,4 +31,14 @@ public interface SysMenuDao {
      * 插入一个菜单至数据库中
      */
     int insertObject(SysMenu entity);
+
+    /**
+     * 根据id查找菜单
+     */
+    SysMenu findObjectById(Integer id);
+
+    /**
+     * 根据id更新菜单
+     */
+    int updateObject(SysMenu entity);
 }

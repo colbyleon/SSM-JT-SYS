@@ -119,8 +119,12 @@
     }
     
     function doSaveOrUpdate() {
-        var url = "menu/doInsertObject.do"
+        var menuId = $(".container-fluid").data("menuId");
+        var url = menuId ? "menu/doUpdateObject.do" : "menu/doInsertObject.do";
         var params = doGetParams();
+        if(menuId){
+            params.id = menuId;
+        }
         $.post(url,params,function (result) {
             if(result.state == 1) {
                 alert(result.message);

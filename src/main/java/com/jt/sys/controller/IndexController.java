@@ -1,5 +1,6 @@
 package com.jt.sys.controller;
 
+import com.jt.common.vo.JsonResult;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -16,4 +17,6 @@ public class IndexController {
 	public String pageUI(){
 		return "common/page";
 	}
+
+
 }

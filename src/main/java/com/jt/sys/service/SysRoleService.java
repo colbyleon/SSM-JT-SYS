@@ -19,7 +19,7 @@ public interface SysRoleService {
     /**
      * 插入一个角色
      */
-    int saveObject(SysRole entity);
+    String saveObject(SysRole entity,String[] menuIds);
 
     /**
      * 更新一个角色
@@ -31,4 +31,13 @@ public interface SysRoleService {
      */
     List<CheckBox> findObjects();
 
+    /**
+     * 根据id删除一个角色
+     */
+    String deleteObject(Integer id);
+
+    /**
+     * 根据角色id找到对应的菜单id
+     */
+    List<Integer> findRoleMenu(Integer roleId);
 }

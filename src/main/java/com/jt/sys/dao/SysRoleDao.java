@@ -29,4 +29,9 @@ public interface SysRoleDao {
      * 查询所有角色的id和名字
      */
     List<com.jt.common.vo.CheckBox> findObjects();
+
+    /**
+     * 根据id删除一个角色
+     */
+    int deleteObject(Integer id);
 }

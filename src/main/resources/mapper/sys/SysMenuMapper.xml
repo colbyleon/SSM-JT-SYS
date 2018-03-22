@@ -51,4 +51,18 @@
         now(),now(),#{createdUser},#{modifiedUser})
     </insert>
 
+    <!-- 根据id查找一个菜单 -->
+    <select id="findObjectById" resultType="sysMenu">
+        select * from jt_sys.sys_menus
+        where id = #{id}
+    </select>
+
+    <!-- 根据id更新一个菜单 -->
+    <update id="updateObject" parameterType="sysMenu">
+        update jt_sys.sys_menus
+        set name=#{name},url=#{url},type=#{type},sort=#{sort},parentId=#{parentId},
+            permission = #{permission},modifiedTime=now()
+        where id = #{id}
+    </update>
+
 </mapper>

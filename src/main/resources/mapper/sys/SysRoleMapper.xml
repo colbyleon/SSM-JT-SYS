@@ -39,7 +39,8 @@
 	</delete>
 
     <!-- 插入一个角色 -->
-    <insert id="insertObject" parameterType="sysRole">
+    <insert id="insertObject" parameterType="sysRole"
+            useGeneratedKeys="true" keyProperty="id">
         insert into sys_roles
         (id,name,note,createdTime,modifiedTime,createdUser,modifiedUser)
         values

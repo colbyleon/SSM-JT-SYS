@@ -78,6 +78,8 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new ServiceException("菜单名字不能为空");
         if(entity.getType()!=1&&entity.getType()!=2)
             throw new ServiceException("类型不正确，只能为1或2");
+        if (entity.getId()!=null)
+            throw new ServiceException("插入时怎么会有id值");
         // 2. 执行插入操作
         int row ;
         try {
@@ -90,5 +92,50 @@ public class SysMenuServiceImpl implements SysMenuService {
             throw new ServiceException("插入失败了");
         // 3. 封装并返回结果
         return "成功插入"+row+"个菜单";
+    }
+
+    /**
+     * 根据id查找菜单
+     * @param id
+     * @return
+     */
+    @Override
+    public SysMenu findObjectById(Integer id) {
+        // 1. 对参数进行合法性检查
+        if (id == null || id < 1)
+            throw new ServiceException("菜单ID不合法");
+        // 2. 查找数据
+        SysMenu menu;
+        try {
+            menu = sysMenuDao.findObjectById(id);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException("服务器正在维护中");
+        }
+        // 3. 返回数据
+        return menu;
+    }
+
+    /**
+     * 根据id更新一个菜单
+     */
+    @Override
+    public String updateObject(SysMenu entity) {
+        // 1. 对参数进行合法性检查
+        if (StringUtils.isEmpty(entity.getName()))
+            throw new ServiceException("菜单名称不能为空");
+        // 2. 进行更新操作
+        int rows;
+        try {
+            rows = sysMenuDao.updateObject(entity);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServiceException("服务器正在维护中...");
+        }
+        // 3. 对结果封装并返回
+        if (rows <= 0){
+            throw new ServiceException("更新失败");
+        }
+        return "更新成功";
     }
 }

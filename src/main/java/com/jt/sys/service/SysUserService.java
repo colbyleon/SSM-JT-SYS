@@ -40,4 +40,9 @@ public interface SysUserService {
      */
     Map<String, Object> findObjectById(Integer userId);
 
+    /**
+     * 处理登陆请求
+     */
+    void login(String username, String password);
+
 }

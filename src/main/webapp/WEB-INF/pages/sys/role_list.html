@@ -92,11 +92,6 @@
         $(".container-fluid").load(url, function () {
             // 页面加载完成后设置标题
             $(".box-title").html(title);
-            var roleDate = $(".container-fluid").data("roleData");
-            if(roleDate){
-                $("#nameId").val(roleDate.name);
-                $("#noteId").val(roleDate.note);
-            }
         });
     }
 

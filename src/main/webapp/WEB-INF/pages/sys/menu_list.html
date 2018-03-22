@@ -131,53 +131,52 @@
             .on("click",".btn-update",doUpdateObject)
     })
 
-    // 加载编辑页面
-    function doLoadEditUI() {
-        var title = "修改菜单";
-        if($(this).hasClass("btn-add")){
-            title = "添加菜单";
-        }
-        var url = "menu/editUI.do";
-        $(".container-fluid").load(url,function () {
-            $(".box-title").html(title);
-            initEdit();
-        })
-    }
-
     function doUpdateObject() {
         var id = getSelectedId();
         if(!id){
             alert("请选择一个菜单");
             return;
         }
-        var tr = $("#menuTable input:checked").parents("tr");
-        var menu ={
-            id:id,
-            name:tr.find("td:eq(2)").text(),
-            parentName:tr.find("td:eq(3)").html(),
-            type:tr.find("td:eq(4) span").html()=="菜单"?1:2,
-            sort:tr.find("td:eq(5)").html(),
-            url:tr.find("td:eq(6)").html(),
-            permission:tr.find("td:eq(7)").html(),
-        }
-        $(".container-fluid").data("menu",menu);
+        var parentName = $("#menuTable input:checked").parents("tr").find("td:eq(3)").html();
+        $(".container-fluid").data("menuId", id);
+        $(".container-fluid").data("parentName", parentName);
         doLoadEditUI();
     }
+
+    // 加载编辑页面
+    function doLoadEditUI() {
+        var isUpdate = !$(this).hasClass("btn-add");
+        var title = isUpdate?"修改菜单":"添加菜单";
+
+        var url = "menu/editUI.do";
+        $(".container-fluid").load(url,function () {
+            $(".box-title").html(title);
+            if(isUpdate)
+            initEdit();
+        })
+    }
+
     function initEdit() {
-        var menu = $(".container-fluid").data("menu");
-        if(!menu)return;
-        // 类型按钮
-        $(".form-horizontal input[name='typeId'][value='" + menu.type + "']").prop("checked", true);
-        $("#nameId").val(menu.name);
-        $("#parentId").val(menu.parentName);
-        $("#urlId").val(menu.url);
-        $("#permissionId").val(menu.permission);
-        $("#sortId").val(menu.sort);
-
-
-        var parentId;
-        // 注意：上级菜单只设置了名字，用于存储的id值需要存入到缓存中,否则父级id会存错
-
+        var url = "menu/doFindObjectById.do"
+        var id = $(".container-fluid").data("menuId");
+        var parentName = $(".container-fluid").data("parentName");
+        $(".container-fluid").removeData();
+        $.post(url,{id:id},function (result) {
+            if(result.state == 1) {
+                var menu = result.data;
+                $(".form-horizontal input[type='radio'][value='" + menu.type + "']").prop("checked",true);
+                $("#nameId").val(menu.name);
+                $("#parentId").val(parentName);
+                $("#urlId").val(menu.url);
+                $("#permissionId").val(menu.permission);
+                $("#sortId").val(menu.sort);
+                // 面板初始化要将parentId存入缓存中，不然提交时parentName与parentId不一致
+                $(".form-horizontal").data("parentId", menu.parentId);
+                $(".container-fluid").data("menuId", menu.id);
+            }else {
+                alert("初始化面板异常")
+            }
+        })
     }
 
     function getSelectedId() {

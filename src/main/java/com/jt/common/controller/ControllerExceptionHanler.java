@@ -1,11 +1,10 @@
 package com.jt.common.controller;
 
+import com.jt.common.exception.ServiceException;
+import com.jt.common.vo.JsonResult;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.jt.common.exception.ServiceException;
-import com.jt.common.vo.JsonResult;
 
 /**
  * 负责全局异常处理
@@ -23,9 +22,9 @@ public class ControllerExceptionHanler {
 		return new JsonResult(e);
 	}
 
-	@ExceptionHandler(Exception.class)
+	@ExceptionHandler(Throwable.class)
     @ResponseBody
-    public JsonResult handleServiceException(Exception e){
+    public JsonResult handleServiceException(Throwable e){
 	    e.printStackTrace();
         return new JsonResult(e);
     }

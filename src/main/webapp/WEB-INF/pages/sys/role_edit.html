@@ -38,15 +38,39 @@
 </div>
 <script type="text/javascript" src="bower_components/ztree/jquery.ztree.all.min.js"></script>
 <script type="text/javascript">
+    var zTree;
+    //初始化zTree时会用到
+    var setting = {
+        data: {
+            simpleData: {
+                enable: true,
+                idKey: "id",  //节点数据中保存唯一标识的属性名称
+                pIdKey: "parentId",  //节点数据中保存其父节点唯一标识的属性名称
+                rootPId: null  //根节点id
+            }
+        },
+        check: {
+            enable: true,
+            nocheckInherit: true
+        }
+
+    }
 
     // 获取表单中的数据
     function getEditFormData() {
+        var nodes = zTree.getCheckedNodes(true);
+        var menuIds = [];
+        $.each(nodes, function (i, node) {
+            menuIds.push(node.id);
+        })
         var params = {
             name: $("#nameId").val(),
             note: $("#noteId").val(),
+            menuIds: menuIds.toString()
         }
         return params;
     }
+
 
     function doSaveOrUpdate() {
         // 1. 获取表单数据
@@ -64,17 +88,16 @@
         // 2. 异步提交表单数据
         $.post(url, params, function (result) {
             alert(result.message);
-            if(result.state != 1)return;
+            if (result.state != 1) return;
             // 添加和更新后重新加载角色页面
-            $(".container-fluid").load("role/listUI.do");
-            // 面板数据用完后要清空，不然会出现问题
-            $(".container-fluid").removeData();
+            doCancel();
         })
     }
 
     // 点击取消事件
     function doCancel() {
         $(".container-fluid").load("role/listUI.do");
+        $(".container-fluid").removeData();
     }
 
     // 页面加载完成后注册事件
@@ -82,7 +105,48 @@
         $(".box-footer")
             .on("click", ".btn-cancel", doCancel)
             .on("click", ".btn-save", doSaveOrUpdate)
+
+        doLoadZTreeNodes();
     })
+
+    function doLoadZTreeNodes() {
+        var url = "menu/doFindZtreeMenuNodes.do";
+        $.getJSON(url, function (result) {
+            if (result.state == 1) {
+                // 使用init函数需要先引入ztree对应的js文件ipe
+                zTree = $.fn.zTree.init($("#menuTree"), setting, result.data);
+            } else {
+                alert(result.message)
+            }
+        })
+        var roleDate = $(".container-fluid").data("roleData");
+        if (roleDate)
+            doInitEditForm(roleDate);
+    }
+
+    function doInitEditForm(roleDate) {
+        $("#nameId").val(roleDate.name);
+        $("#noteId").val(roleDate.note);
+        var url = "role/doFindRoleMenu.do";
+        $.post(url, {"roleId": roleDate.id}, function (result) {
+            if (result.state == 1) {
+                var menuIds = result.data;
+                console.log(menuIds);
+
+                for (var i = 0; i < menuIds.length; i++) {
+                    //获取key为id值为menuIds[i]的节点
+                    var node = zTree.getNodeByParam("id", menuIds[i]);
+                    //选中当前节点
+                    zTree.checkNode(node, true, false);
+                }
+            } else {
+                alert(result.message);
+            }
+        })
+
+    }
+
+
 </script>
     
     

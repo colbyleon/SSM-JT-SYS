@@ -67,5 +67,19 @@ public class SysMenuController {
         JsonResult jsonResult = new JsonResult(message);
         return jsonResult;
     }
+    @RequestMapping("doFindObjectById")
+    @ResponseBody
+    public JsonResult doFindObjectById(Integer id) {
+        SysMenu menu = sysMenuService.findObjectById(id);
+        JsonResult jsonResult = new JsonResult(menu, "Query Ok");
+        return jsonResult;
+    }
+
+    @RequestMapping("doUpdateObject")
+    @ResponseBody
+    public JsonResult doUpdateObject(SysMenu entity) {
+        String message = sysMenuService.updateObject(entity);
+        return new JsonResult(message);
+    }
 }
 

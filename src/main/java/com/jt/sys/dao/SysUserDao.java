@@ -49,5 +49,12 @@ public interface SysUserDao {
      */
     SysUser findObjectById(Integer id);
 
+    /**
+     * 根据username查询用户
+     */
+    SysUser findObjectByUsername(String username);
+
+    /** 根据用户名查找权限信息 */
+    List<String> findPermissionByUsername(String username);
 
 }
