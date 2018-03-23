@@ -108,6 +108,39 @@
     <bean  class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
         <property name="securityManager" ref="securityManager"/>
     </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    
+    <!-- 配置基于xml的事务管理，事务控制策略 -->
+    <tx:advice id="txAdivce" transaction-manager="txManager">
+        <tx:attributes>
+            <!-- 默认所有的运行时异常进行回滚，查询方法只需要只读，性能更好 -->
+            <tx:method name="find*" isolation="READ_COMMITTED"
+                       propagation="REQUIRED" read-only="true" timeout="10"/>
+            <tx:method name="get*" read-only="true"/>
+
+            <!-- DML操作，事务传播行为定义为默认，就是将多个事务整合到一起 -->
+            <tx:method name="insert*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+            <tx:method name="save*" propagation="REQUIRED" isolation="READ_COMMITTED"/>
+            <tx:method name="update*" propagation="REQUIRED" isolation="READ_UNCOMMITTED"/>
+            <tx:method name="delete*" propagation="REQUIRED" isolation="READ_UNCOMMITTED"/>
+
+            <!-- 其它操作使用默认事务策略 -->
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 基于xml的事务控制需要aop的支持 -->
+    <aop:config>
+        <!-- 定义切点，所有需要事务控制的方法 -->
+        <aop:pointcut id="txPointcut" expression="execution(* com.jt.sys.service.impl..*(..))"/>
+        <!-- 定义通知，应用事务管理到这些切点上 -->
+        <aop:advisor advice-ref="txAdivce" pointcut-ref="txPointcut" order="1"/>
+    </aop:config>
+
 </beans>
 
 
