@@ -112,15 +112,18 @@ public class SysUserServiceImpl implements SysUserService {
         if (StringUtils.isEmpty(entity.getUsername())) {
             throw new ServiceException("用户名不能为空");
         }
-        if (StringUtils.isEmpty(entity.getPassword()))
-            if (entity == null || roleIds == null) {
-                throw new ServiceException("数据参数不能为空");
-            }
+        if (entity == null || roleIds == null) {
+            throw new ServiceException("数据参数不能为空");
+        }
+
+        if (!StringUtils.isEmpty(entity.getPassword())){
+            String salt = UUID.randomUUID().toString();
+            entity.setSalt(salt);
+            SimpleHash sHash = new SimpleHash("MD5", entity.getPassword(), salt);
+            entity.setPassword(sHash.toString());
+        }
+
         // 2. 执行插入
-        String salt = UUID.randomUUID().toString();
-        entity.setSalt(salt);
-        SimpleHash sHash = new SimpleHash("MD5", entity.getPassword(), salt);
-        entity.setPassword(sHash.toString());
         int rows = 0;
         try {
             rows = sysUserDao.insertObject(entity);
