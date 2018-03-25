@@ -55,12 +55,15 @@ public class SysRoleController {
         return new JsonResult(message);
     }
 
-    // 执行行更新
+    /**
+     *  执行行更新
+     *  同时更新角色对应的菜单
+     */
     @RequestMapping("doUpdateObject")
     @ResponseBody
-    public JsonResult doUpdateObject(SysRole sysRole) {
-        int i = sysRoleService.updateObjct(sysRole);
-        return new JsonResult("更新成功");
+    public JsonResult doUpdateObject(SysRole sysRole,String menuIds) {
+        String message = sysRoleService.updateObjct(sysRole,menuIds);
+        return new JsonResult(message);
     }
 
     @RequestMapping("doFindObjects")

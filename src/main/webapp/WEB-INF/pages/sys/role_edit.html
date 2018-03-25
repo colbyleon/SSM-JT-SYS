@@ -51,8 +51,11 @@
         },
         check: {
             enable: true,
-            nocheckInherit: true
-        }
+            nocheckInherit: true,
+            chkStyle: "checkbox",
+            chkboxType: { "Y": "ps", "N": "ps" }
+        },
+
 
     }
 
@@ -124,6 +127,7 @@
             doInitEditForm(roleDate);
     }
 
+    //初始化角色修改面板
     function doInitEditForm(roleDate) {
         $("#nameId").val(roleDate.name);
         $("#noteId").val(roleDate.note);
@@ -131,13 +135,13 @@
         $.post(url, {"roleId": roleDate.id}, function (result) {
             if (result.state == 1) {
                 var menuIds = result.data;
-                console.log(menuIds);
-
+                // 菜单项填充
                 for (var i = 0; i < menuIds.length; i++) {
                     //获取key为id值为menuIds[i]的节点
                     var node = zTree.getNodeByParam("id", menuIds[i]);
                     //选中当前节点
                     zTree.checkNode(node, true, false);
+                    zTree.expandNode(node, true, true, false);
                 }
             } else {
                 alert(result.message);

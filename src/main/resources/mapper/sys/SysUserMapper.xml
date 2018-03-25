@@ -86,12 +86,6 @@
         where id=#{id}
     </select>
 
-    <!-- 根据username查询用户 -->
-    <select id="findObjectByUsername" resultType="sysUser">
-        select *
-        from jt_sys.sys_users
-        where username = #{username}
-    </select>
 
     <!-- 根据用户名查找权限信息 -->
     <select id="findPermissionByUsername" resultType="string">
@@ -102,5 +96,27 @@
         join jt_sys.sys_menus sm on rm.menu_id = sm.id
         where su.username = #{username}
     </select>
+
+    <!-- 根据username查询用户 -->
+    <select id="findObjectByUsername" resultType="sysUser">
+        select *
+        from jt_sys.sys_users
+        where username = #{username}
+    </select>
+
+    <!-- 根据username查询用户 -->
+    <select id="findObjectByEmail" resultType="sysUser">
+        select *
+        from jt_sys.sys_users
+        where email = #{email}
+    </select>
+
+    <!-- 根据username查询用户 -->
+    <select id="findObjectByMobile" resultType="sysUser">
+        select *
+        from jt_sys.sys_users
+        where mobile = #{mobile}
+    </select>
+
 
 </mapper>

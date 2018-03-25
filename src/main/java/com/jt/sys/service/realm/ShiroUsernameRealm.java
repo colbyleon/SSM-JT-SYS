@@ -18,7 +18,7 @@ import java.util.Set;
 /**
  * 通过Realm这个领域对象对认证领域和授权领域信息进行检测
  */
-public class ShiroUserRealm extends AuthorizingRealm {
+public class ShiroUsernameRealm extends AuthorizingRealm {
     @Autowired
     private SysUserDao sysUserDao;
 
@@ -59,13 +59,12 @@ public class ShiroUserRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         // 1. 获取令牌中的信息
-        System.out.println("principal--------->" + token.getPrincipal());
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String username = upToken.getUsername();
-        System.out.println("username: -------------->" + username);
+        System.out.println("username----->username=" + username);
         // 2. 根据用户名查询用户信息
         SysUser user = sysUserDao.findObjectByUsername(username);
-        System.out.println("user----------------->" + user);
+        System.out.println("username----->user=" + user);
         String password = user.getPassword();
         String salt = user.getSalt();
         ByteSource saltByte = ByteSource.Util.bytes(salt);

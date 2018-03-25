@@ -57,48 +57,18 @@
         <property name="prefix" value="/WEB-INF/pages/"/>
         <property name="suffix" value=".html"></property>
     </bean>
-
-    <!-- 密码加密处理器 -->
-    <bean id ="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-        <property name="hashAlgorithmName" value="MD5"/>
+    
+    <!-- 配置用户验证及权限realm -->
+    <bean id="sysUserRealm" class="com.jt.sys.service.realm.ShiroUsernameRealm" init-method="">
+        <property name="credentialsMatcher">
+            <bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+                <property name="hashAlgorithmName" value="MD5"/>
+            </bean>
+        </property>
     </bean>
-
-    <!-- 用户名验证版用户验证及权限realm -->
-    <bean id="sysUsernameRealm" class="com.jt.sys.service.realm.ShiroUsernameRealm" init-method="">
-        <property name="credentialsMatcher" ref="credentialsMatcher"/>
-    </bean>
-    <!-- 邮箱验证版用户验证及权限realm -->
-    <bean id="emailRealm" class="com.jt.sys.service.realm.ShiroEmailRealm" init-method="">
-        <property name="credentialsMatcher" ref="credentialsMatcher"/>
-    </bean>
-    <!-- 邮箱验证版用户验证及权限realm -->
-    <bean id="mobileRealm" class="com.jt.sys.service.realm.ShiroMobileRealm" init-method="">
-        <property name="credentialsMatcher" ref="credentialsMatcher"/>
-    </bean>
-
-
     <!-- 配置securityManager,shiro的核心 -->
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-        <!--<property name="realm" ref="sysUserRealm"/>-->
-        <!-- 验证策略 -->
-        <property name="authenticator" ref="authenticator"/>
-        <!-- 多个验证策略realms -->
-        <property name="realms">
-            <list>
-                <!-- 多个realm，有验证顺序之分 -->
-                <ref bean="sysUsernameRealm"/>
-                <ref bean="emailRealm"/>
-                <ref bean="mobileRealm"/>
-            </list>
-        </property>
-    </bean>
-
-    <!-- 配置多重认证器 -->
-    <bean id="authenticator" class="org.apache.shiro.authc.pam.ModularRealmAuthenticator">
-        <!-- 配置多重谁策略为只要一个满足即可 -->
-        <property name="authenticationStrategy">
-            <bean class="org.apache.shiro.authc.pam.AtLeastOneSuccessfulStrategy"/>
-        </property>
+        <property name="realm" ref="sysUserRealm"/>
     </bean>
 
     <!-- 配置验证与授权缓存（后期一般都用redis，不再用这个） -->

@@ -3,7 +3,6 @@
         <div class="box">
             <div class="box-header">
                 <h3 class="box-title">用户管理</h3>
-
                 <div class="box-tools">
                     <div class="input-group input-group-sm" style="width: 350px;">
                         <input type="text" name="table_search" id="searchNameId"
@@ -13,7 +12,7 @@
                             <button type="button" class="btn btn-default btn-search">
                                 <i class="fa fa-search"></i>
                             </button>
-                            <button type="button" class="btn btn-default btn-add">添加</button>
+                            <button type="button" class="btn btn-default btn-add" data-toggle="modal" data-target="#myModal">添加</button>
                             <button type="button" class="btn btn-default btn-update">修改</button>
                         </div>
                     </div>
@@ -44,6 +43,60 @@
         <!-- /.box -->
     </div>
 </div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">添加用户</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="usernameId" class="col-sm-2 control-label">用户名</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="usernameId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordId" class="col-sm-2 control-label">密码</label>
+
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="passwordId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="emailId" class="col-sm-2 control-label">邮箱</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="emailId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneId" class="col-sm-2 control-label">手机号</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="phoneId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="rolesId" class="col-sm-2 control-label">角色</label>
+                            <div class="col-sm-10" id="rolesId">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-footer -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-cancel" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-save" btn-save>Save</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
     $(function () {
         // 页面加载开始加载数据
@@ -56,12 +109,42 @@
         $(".input-group-btn")
             .on("click", ".btn-search", doQueryObjects)
             .on("click", ".btn-update", doUpdateObject)
-            .on("click", ".btn-add", doLoadEditUI)
 
-        // 用户选择复选框事件
+        // 用户禁用启用事件
         $("#tbodyId")
             .on("click", "button", doValidById)
+
+        // 模态框隐藏时清空数据
+        $("#myModal")
+            .on("click", ".btn-save", doSaveOrUpdate)
+            .on("hide.bs.modal",clearModal);
+
+        // 加载用户角色关系复先框
+        doLoadSysRoles();
     })
+    // 加载角色信息
+    function doLoadSysRoles() {
+        var url = "role/doFindObjects.do"
+        $.getJSON(url, function (result) {
+            if (result.state == 1) {
+                doInitDivSysRoles(result.data);
+            } else {
+                alert(result.message);
+            }
+        });
+    }
+
+    function doInitDivSysRoles(data) {
+        var div = $("#rolesId");
+        var checkBox = "<input type='checkbox' " +
+            "name = 'roleItem' " +
+            "value='[id]'> [name]  </input>";
+        $.each(data, function (i, role) {
+            div.append(
+                checkBox.replace("[id]", role.id).replace("[name]", role.name)
+            );
+        })
+    }
 
     // 禁用或启用
     function doValidById() {
@@ -155,48 +238,105 @@
     }
 
 
+    function clearModal() {
+        $("#myModalLabel").html("添加用户");
+        $("#usernameId").val("");
+        $("#passwordId").val("");
+        $("#emailId").val("");
+        $("#phoneId").val("");
+        $("#rolesId input").each(function () {
+            $(this).prop("checked", false);
+        })
+        $("#myModal").removeData();
+    }
     // 修改
     function doUpdateObject() {
         // 获取需要修改的用户id
         var id = $("#tbodyId input[type='radio']:checked").val();
+        // 将数据绑定到模态框
+        $("#myModal").data("id", id);
         // 没有选中的用户则返回
-        if(!id)return;
-        var user = $("#tbodyId input[value='" + id + "']").parents("tr").data("user");
-        // 将数据存入到面板
-        $(".container-fluid").data("user", user);
-        doLoadEditUI();
-
-    }
-
-    // 打开编辑页面，更新和添加
-    function doLoadEditUI() {
-
-        // 标题设置
-        var title;
-        var user;
-        if ($(this).hasClass("btn-add")) {
-            title = "添加用户";
-        } else {
-            title = "修改用户";
-            // 取出用户数据
-            user = $(".container-fluid").data("user");
+        if(!id){
+            alert("请选择一个用户")
+            return;
         }
-        var url = "user/editUI.do"
-
-        // 加载编辑页面
-        $(".container-fluid").load(url, function () {
-            $(".box-title").html(title);
-            // 如果是修改则提取tr的缓存数据到输入框中，并将数据缓存到面板中
-            if (user) {
-                $("#usernameId").val(user.username);
-                $("#passwordId").val(user.password);
-                $("#emailId").val(user.email);
-                $("#phoneId").val(user.mobile);
-            }
-        });
-
-
+        $("#myModal").modal("show");
+        var user = $("#tbodyId input[value='" + id + "']").parents("tr").data("user");
+        // 初始化修改面析
+        $("#myModalLabel").html("修改用户");
+        $("#usernameId").val(user.username);
+        $("#passwordId").val("");
+        $("#emailId").val(user.email);
+        $("#phoneId").val(user.mobile);
+        // 完成后加载修改用户的角色信息
+        doLoadUpdateRole(user);
     }
+
+    // 修改时加载用户的角色信息
+    function doLoadUpdateRole(user) {
+        var url = "user/doFindRoleIdById.do";
+        $.post(url, {userId: user.id}, function (result) {
+            if (result.state == 1) {
+                var roleIds = result.data.roleIds;
+                for(var i in roleIds){
+                    $("#rolesId input[value='" + roleIds[i] + "']").prop("checked", true);
+                }
+            } else {
+                alert(result.message);
+            }
+        })
+    }
+
+    function doSaveOrUpdate() {
+        // 取出数据后就清空缓存
+        var id = $("#myModal").data("id");
+        // 获取编辑好的参数
+        var params = doGetParams();
+        var url;
+        // 判断添加与修改
+        if (id) {
+            url = "user/doUpdateObject.do";
+            params.id = id;
+        } else {
+            url = "user/doInsertObject.do";
+        }
+        console.log(url)
+        console.log(params)
+        // 发送post异步请求，执行修改或添加,提示结果
+        $.post(url, params, function (result) {
+            if (result.state == 1) {
+                alert(result.message);
+                // 跳转到用户列表页面
+                $("#myModal").modal("hide");
+                doGetObjects();
+            } else {
+                alert(result.message);
+            }
+        }, "json");
+    }
+
+    function doGetParams() {
+        // 获取实体数据
+        var params = {
+            username: $("#usernameId").val(),
+            password: $("#passwordId").val(),
+            email: $("#emailId").val(),
+            mobile: $("#phoneId").val()
+        }
+
+        // 获取实体对应的角色关系
+        var roleIds = [];
+        $("#rolesId input").each(function () {
+            if($(this).prop("checked")){
+                roleIds.push($(this).val());
+            }
+        })
+        // spring mvc 不能识别js中的数组，所以要转成字符串来传递
+        console.log(roleIds.toString())
+        params.roleIds = roleIds.toString();
+        return params;
+    }
+
 
 </script>
 

@@ -22,9 +22,9 @@ public interface SysRoleService {
     String saveObject(SysRole entity,String[] menuIds);
 
     /**
-     * 更新一个角色
+     * 更新一个角色 及其对应的菜单关系
      */
-    int updateObjct(SysRole entity);
+    String updateObjct(SysRole entity, String menuIds);
 
     /**
      * @return 所有角色的id,name

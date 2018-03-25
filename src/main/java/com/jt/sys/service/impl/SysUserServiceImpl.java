@@ -131,7 +131,7 @@ public class SysUserServiceImpl implements SysUserService {
             sysUserRoleDao.insertObject(entity.getId(), roleIds.split(","));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new ServiceException("系统正在维护中");
+            throw new ServiceException("用户名不能重复");
         }
 
         // 3. 根据执行结果判定返回
@@ -194,20 +194,20 @@ public class SysUserServiceImpl implements SysUserService {
 
     /**
      * 处理登陆请求
-     * @param username
-     * @param password
+     * @param account   用户输入的用户名、邮箱、手机号
+     * @param password  用户输入的密码
      */
     @Override
-    public void login(String username, String password) {
+    public void login(String account, String password) {
         // 1. 对数据进行合法性验证
-        if(StringUtils.isEmpty(username))
+        if(StringUtils.isEmpty(account))
             throw new ServiceException("用户名不能为空");
         if (StringUtils.isEmpty(password)) {
             throw new ServiceException("密码不能为空");
         }
         // 2. 进行封装
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+        UsernamePasswordToken token = new UsernamePasswordToken(account, password);
         // 3. 登陆
         try {
             subject.login(token);

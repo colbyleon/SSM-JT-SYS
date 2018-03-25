@@ -13,6 +13,7 @@
                             </button>
                             <button type="button" class="btn btn-default btn-add">添加</button>
                             <button type="button" class="btn btn-default btn-update">修改</button>
+
                         </div>
                     </div>
                 </div>
@@ -164,7 +165,8 @@
         $.post(url,{id:id},function (result) {
             if(result.state == 1) {
                 var menu = result.data;
-                $(".form-horizontal input[type='radio'][value='" + menu.type + "']").prop("checked",true);
+                $(".form-horizontal input[type='radio'][value='" + menu.type + "']")
+                    .prop("checked",true);
                 $("#nameId").val(menu.name);
                 $("#parentId").val(parentName);
                 $("#urlId").val(menu.url);
@@ -174,7 +176,7 @@
                 $(".form-horizontal").data("parentId", menu.parentId);
                 $(".container-fluid").data("menuId", menu.id);
             }else {
-                alert("初始化面板异常")
+                alert("初始化面板失败")
             }
         })
     }
