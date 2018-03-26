@@ -1,11 +1,8 @@
 package com.jt.sys.service;
 
-import com.jt.common.vo.PageObject;
+import com.github.pagehelper.PageInfo;
 import com.jt.sys.entity.SysUser;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
 
 public interface SysUserService {
@@ -17,7 +14,7 @@ public interface SysUserService {
      * 调用dao层方法，依据条件获取当前数据以及总记录数
      * 封装数据并返回
      */
-    PageObject<SysUser> findPageObjects(String username, Integer pageCurrent);
+    PageInfo<SysUser> findPageObjects(String username, Integer pageCurrent);
 
     /**
      * 启用和禁用数据

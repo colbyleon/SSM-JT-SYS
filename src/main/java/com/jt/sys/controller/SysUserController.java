@@ -1,5 +1,6 @@
 package com.jt.sys.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.util.DebugConfig;
 import com.jt.common.vo.JsonResult;
 import com.jt.common.vo.PageObject;
@@ -45,9 +46,9 @@ public class SysUserController {
     @RequestMapping("doFindPageObjects")
     @ResponseBody
     public JsonResult doFindPageObjects(String username, Integer pageCurrent) {
-        PageObject<SysUser> pageObject = sysUserService.findPageObjects(username, pageCurrent);
+        PageInfo<SysUser> pageInfo = sysUserService.findPageObjects(username, pageCurrent);
         JsonResult jsonResult = new JsonResult();
-        jsonResult.setData(pageObject);
+        jsonResult.setData(pageInfo);
         return jsonResult;
     }
 

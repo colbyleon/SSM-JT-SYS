@@ -171,8 +171,8 @@
                 tr.find("td:eq(4)").html(valid ? "禁用" : "启用");
                 tr.find("td:last button").html(valid ? "启用" : "禁用");
             } else {
-                alert(result.message);
             }
+            alert(result.message);
         })
     }
 
@@ -188,7 +188,7 @@
         $.post(url, params, function (result) {
             if (result.state == 1) {
                 // 加载用户信息
-                setTableBodyRows(result.data.records);
+                setTableBodyRows(result.data.list);
                 // 加载页码信息
                 setPagination(result.data);
             } else {

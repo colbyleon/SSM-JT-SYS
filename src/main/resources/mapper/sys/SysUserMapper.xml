@@ -22,15 +22,14 @@
     <!-- 分页查询角色 -->
     <select id="findPageObjects" resultType="sysUser">
         select * from sys_users
-        <include refid="QueryWhere"/>
-        limit ${startIndex},${pageSize}
+        <include refid="QueryWhere"/>        
     </select>
 
-    <!-- 查询角色的总数量 -->
-    <select id="getRowCount" resultType="int">
-        select count(id) from sys_users
-        <include refid="QueryWhere"/>
-    </select>
+    <!--&lt;!&ndash; 查询角色的总数量 &ndash;&gt;-->
+    <!--<select id="getRowCount" resultType="int">-->
+        <!--select count(id) from sys_users-->
+        <!--<include refid="QueryWhere"/>-->
+    <!--</select>-->
 
     <!-- 禁用和启用状态信息 -->
     <update id="validById">

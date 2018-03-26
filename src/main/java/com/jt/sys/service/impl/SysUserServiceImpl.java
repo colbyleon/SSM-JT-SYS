@@ -1,5 +1,7 @@
 package com.jt.sys.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
 import com.jt.common.util.StringUtils;
 import com.jt.common.vo.PageObject;
@@ -29,7 +31,6 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Resource
     private SysUserDao sysUserDao;
-
 
     @Autowired
     private SysUserRoleDao sysUserRoleDao;
@@ -115,6 +116,8 @@ public class SysUserServiceImpl implements SysUserService {
         if (entity == null || roleIds == null) {
             throw new ServiceException("数据参数不能为空");
         }
+        if(roleIds == null ||roleIds.length() == 0)
+            throw new ServiceException("至少有一个角色关系");
 
         if (!StringUtils.isEmpty(entity.getPassword())){
             String salt = UUID.randomUUID().toString();
@@ -144,7 +147,7 @@ public class SysUserServiceImpl implements SysUserService {
 
 
     @Override
-    public PageObject<SysUser> findPageObjects(String username, Integer pageCurrent) {
+    public PageInfo<SysUser> findPageObjects(String username, Integer pageCurrent) {
         // 1. 数据合法性验证
         if (pageCurrent == null || pageCurrent < 1) {
             throw new ServiceException("当前页面值不合法");
@@ -152,17 +155,14 @@ public class SysUserServiceImpl implements SysUserService {
         // 2. 计算startIndex的值
         int pageSize = 3;
         int startSize = pageSize * (pageCurrent - 1);
-        // 3. 依据条件获取当前页数据
-        List<SysUser> list = sysUserDao.findPageObjects(username, startSize, pageSize);
-        // 4. 依据条件获取总数据
-        int rowCount = sysUserDao.getRowCount(username);
-        // 5. 封装数据
-        PageObject<SysUser> pageObject = new PageObject<>();
-        pageObject.setPageCurrent(pageCurrent);
-        pageObject.setPageSize(pageSize);
-        pageObject.setRecords(list);
-        pageObject.setRowCount(rowCount);
-        return pageObject;
+        // 3. 调用pageHelper静态方法传入当前页以及页面尺寸 ，！！！要紧挨下句查询语句
+        PageHelper.startPage(pageCurrent, pageSize);
+        List<SysUser> users = sysUserDao.findPageObjects(username);
+        // 4. 设置导航页显示数量
+        int navigatePages = 5;
+        // 5. 将数据封装到pageInfo中，不再需要自定义的值对象pageObject，也不需要查询总记录数
+        PageInfo<SysUser> pageInfo = new PageInfo<>(users,navigatePages);
+        return pageInfo;
     }
 
     @Override

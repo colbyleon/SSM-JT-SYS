@@ -11,15 +11,40 @@
 	// 在pagination对象的这些子元素上注册点击事件，点击时执行处理函数
 	$(".pagination").on("click", ".first,.pre,.next,.last", doJumpToPage);
 
-	// 加载页码信息
+    // 加载页码信息
 	function setPagination(data) {
-		$(".rowCount").html("总记录数(" + data.rowCount + ")");
-		$(".pageCount").html("总记录数(" + data.pageCount + ")");
-		$(".pageCurrent").html("当前页(" + data.pageCurrent + ")");
+		$(".rowCount").html("总记录数(" + data.total + ")");
+		$(".pageCount").html("总页数(" + data.pages + ")");
+		$(".pageCurrent").html("当前页(" + data.pageNum + ")");
 		//绑定数据(key/value):data函数可以实现数据绑定以及获取
-		$("#pageId").data("pageCurrent", data.pageCurrent);
-		$("#pageId").data("pageCount", data.pageCount);
+		$("#pageId").data("pageCurrent", data.pageNum);
+		$("#pageId").data("pageCount", data.pages);
+		initNavigate(data);
 	}
+
+    // 初始化导航条
+    function initNavigate(pageInfo) {
+        // 首先删除原有的导航条，不然每次点击会叠加
+        $(".pagination .navigate").remove();
+	    var next = $(".pagination .next").parents("li");// 找到next键
+	    // 遍历导航页码并插入next键前面
+        $.each(pageInfo.navigatepageNums,function (i,page_num) {
+            var nav = $("<li><a class='navigate'>"+page_num+"</a></li>");
+            next.before(nav);//插入到next键的前面
+        })
+        registerNav(pageInfo.pageNum); // 把当前页码传给注册方法
+    }
+
+    //注册导航条的点击事件
+    function registerNav(pageCurrent) {
+        $(".pagination .navigate").on("click",function () {
+            var page = $(this).html();      //1.获取被点击按键代表的页码
+            if(page == pageCurrent)return;  //2.如果是当前页则不做反应
+            $("#pageId").data("pageCurrent", page);  // 3.数据绑定
+            doGetObjects();                         // 4.重新查询
+        })
+    }
+
 
 	function doJumpToPage() {
 		// debugger 加上可以断点调式

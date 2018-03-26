@@ -1,5 +1,6 @@
 package com.jt.sys.service;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.CheckBox;
 import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysRole;
@@ -12,7 +13,7 @@ public interface SysRoleService {
 	 * 本方法中要分页查询角色信息，并查询角色总记录数
 	 * 根据当前页面返回页面数据对象，包括实体数据和分页信息
 	 */
-	PageObject<SysRole> findPageObjects(Integer pageCurrent, String name);
+	PageInfo<SysRole> findPageObjects(Integer pageCurrent, String name);
 
 
 

@@ -164,7 +164,7 @@
         $.post(url, params, function (result) {
             if (result.state == 1) {
                 // 更新数据表格
-                setTableBodyRows(result.data.records);
+                setTableBodyRows(result.data.list);
                 // 更新分页数据
                 // 方法在page页
                 setPagination(result.data);

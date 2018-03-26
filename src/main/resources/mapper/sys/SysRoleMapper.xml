@@ -23,14 +23,13 @@
     <select id="findPageObjects" resultType="sysRole">
         select * from sys_roles
         <include refid="QueryWhere"/>
-        limit ${startIndex},${pageSize}
     </select>
 
-    <!-- 查询角色的总数量 -->
-    <select id="getRowCount" resultType="int">
-        select count(id) from sys_roles
-        <include refid="QueryWhere"/>
-    </select>
+    <!--&lt;!&ndash; 查询角色的总数量 &ndash;&gt;-->
+    <!--<select id="getRowCount" resultType="int">-->
+        <!--select count(id) from sys_roles-->
+        <!--<include refid="QueryWhere"/>-->
+    <!--</select>-->
 
     <!-- 删除单个角色 -->
     <delete id="deleteObject" parameterType="int">

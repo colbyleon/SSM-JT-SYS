@@ -1,5 +1,7 @@
 package com.jt.sys.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
 import com.jt.common.util.StringUtils;
 import com.jt.common.vo.CheckBox;
@@ -30,7 +32,7 @@ public class SysRoleServiceImpl implements SysRoleService {
     }
 
     @Override
-    public PageObject<SysRole> findPageObjects(Integer pageCurrent, String name) {
+    public PageInfo<SysRole> findPageObjects(Integer pageCurrent, String name) {
         // 1. 判断数据的合法性
         if (pageCurrent == null || pageCurrent < 0) {
             throw new ServiceException("页码数据不合法");
@@ -39,17 +41,14 @@ public class SysRoleServiceImpl implements SysRoleService {
         int pageSize = 3;
         int startIndex = (pageCurrent - 1) * pageSize;
         // 3. 分页查询角色信息
-        List<SysRole> roles = sysRoleDao.findPageObjects(startIndex, pageSize, name);
-        // 4. 查询总记录数
-        int rowCount = sysRoleDao.getRowCount(name);
+        PageHelper.startPage(pageCurrent, pageSize);
+        List<SysRole> roles = sysRoleDao.findPageObjects(name);
+        // 4. 设置导航页显示数量
+        int navigatePages = 5;
         // 5. 封装数据
-        PageObject<SysRole> pageObject = new PageObject<>();
-        pageObject.setRecords(roles);
-        pageObject.setPageCurrent(pageCurrent);
-        pageObject.setRowCount(rowCount);
-        pageObject.setPageSize(pageSize);
+        PageInfo<SysRole> pageInfo = new PageInfo<>(roles ,navigatePages);
         // 6. 返回数据（提供给调用者）
-        return pageObject;
+        return pageInfo;
     }
 
 

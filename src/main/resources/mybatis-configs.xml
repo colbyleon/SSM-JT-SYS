@@ -12,6 +12,19 @@
     	<package name="com.jt.sys.entity"/>
         <package name="com.jt.common.vo"/>
     </typeAliases>
+
+    <!-- pageHelper插件 -->
+    <plugins>
+        <!-- com.github.pagehelper为PageHelper类所在包名 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- 使用下面的方式配置参数，后面会有所有的参数介绍 -->
+            <property name="reasonable" value="true"/>
+            <property name="helperDialect" value="mysql"/>
+        </plugin>
+    </plugins>
+    
+    
+    
     <!-- 映射表 已配置自动映射-->
     <mappers>
     	<mapper resource="mapper/sys/SysRoleMapper.xml"/>
@@ -20,5 +33,8 @@
         <mapper resource="mapper/sys/SysMenuMapper.xml"/>
         <mapper resource="mapper/sys/SysRoleMenuMapper.xml"/>
     </mappers>
+
+    
+    
    
 </configuration>

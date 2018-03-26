@@ -11,20 +11,10 @@ public interface SysUserDao {
     /**
      * 获取用户列表
      * @param username          搜索名
-     * @param startIndex    开始搜索下标
-     * @param pageSize      每页用户条数
      */
     List<SysUser> findPageObjects(
-            @Param("username") String username,
-            @Param("startIndex") Integer startIndex,
-            @Param("pageSize") Integer pageSize);
+            @Param("username") String username);
 
-    /**
-     * 依据条件查询总记录数
-     * @param username      用户名
-     * @return              记录数
-     */
-    int getRowCount(@Param("username") String username);
 
     /**
      * 启用和禁用状态

@@ -1,5 +1,6 @@
 package com.jt.sys.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.JsonResult;
 import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysRole;
@@ -33,8 +34,8 @@ public class SysRoleController {
     @RequestMapping("doFindPageObjects")
     @ResponseBody
     public JsonResult doFindPageObjects(Integer pageCurrent, String name) {
-        PageObject<SysRole> pageObject = sysRoleService.findPageObjects(pageCurrent, name);
-        return new JsonResult(pageObject, "Query ok");
+        PageInfo<SysRole> pageInfo = sysRoleService.findPageObjects(pageCurrent, name);
+        return new JsonResult(pageInfo, "Query ok");
     }
 
 

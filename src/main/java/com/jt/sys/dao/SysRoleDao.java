@@ -10,12 +10,7 @@ import com.jt.sys.entity.SysRole;
 public interface SysRoleDao {
 
 	/** 分页查询角色信息*/
-	List<SysRole> findPageObjects(	@Param("startIndex")Integer startIndex,
-									@Param("pageSize")Integer pageSize,
-									@Param("name")String name);
-	/** 查询角色信息总数*/
-	int getRowCount(@Param("name")String name);
-
+	List<SysRole> findPageObjects(	@Param("name")String name);
 
     /**添加一个角色*/
     int insertObject(SysRole sysRole);
