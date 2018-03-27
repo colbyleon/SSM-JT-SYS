@@ -2,7 +2,6 @@ package com.jt.sys.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.JsonResult;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysRole;
 import com.jt.sys.service.SysRoleService;
 import org.springframework.beans.factory.annotation.Autowired;

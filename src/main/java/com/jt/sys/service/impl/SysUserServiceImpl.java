@@ -3,8 +3,8 @@ package com.jt.sys.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
+import com.jt.common.util.ExportUtils;
 import com.jt.common.util.StringUtils;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.dao.SysUserDao;
 import com.jt.sys.dao.SysUserRoleDao;
 import com.jt.sys.entity.SysUser;
@@ -148,19 +148,19 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public PageInfo<SysUser> findPageObjects(String username, Integer pageCurrent) {
-        // 1. 数据合法性验证
+        /* 1. 数据合法性验证*/
         if (pageCurrent == null || pageCurrent < 1) {
             throw new ServiceException("当前页面值不合法");
         }
-        // 2. 计算startIndex的值
+        /* 2. 计算startIndex的值*/
         int pageSize = 3;
         int startSize = pageSize * (pageCurrent - 1);
-        // 3. 调用pageHelper静态方法传入当前页以及页面尺寸 ，！！！要紧挨下句查询语句
+        /* 3. 调用pageHelper静态方法传入当前页以及页面尺寸 ，！！！要紧挨下句查询语句*/
         PageHelper.startPage(pageCurrent, pageSize);
         List<SysUser> users = sysUserDao.findPageObjects(username);
-        // 4. 设置导航页显示数量
+        /* 4. 设置导航页显示数量*/
         int navigatePages = 5;
-        // 5. 将数据封装到pageInfo中，不再需要自定义的值对象pageObject，也不需要查询总记录数
+        /* 5. 将数据封装到pageInfo中，不再需要自定义的值对象pageObject，也不需要查询总记录数*/
         PageInfo<SysUser> pageInfo = new PageInfo<>(users,navigatePages);
         return pageInfo;
     }
@@ -219,4 +219,21 @@ public class SysUserServiceImpl implements SysUserService {
             throw new ServiceException("用户名或密码错误");
         }
     }
+
+    /**
+     * @return 获取所有用户信息
+     */
+    @Override
+    public List<SysUser> exportFileData() {
+        List<SysUser> users;
+        try {
+            users = sysUserDao.findPageObjects(null);
+        } catch (Throwable e) {
+            e.printStackTrace();
+            throw new ServiceException("获取文件失败");
+        }
+        // 返回结果
+        return users;
+    }
+
 }

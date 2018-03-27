@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.jt.common.exception.ServiceException;
 import com.jt.common.util.StringUtils;
 import com.jt.common.vo.CheckBox;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.dao.SysRoleDao;
 import com.jt.sys.dao.SysRoleMenuDao;
 import com.jt.sys.entity.SysRole;

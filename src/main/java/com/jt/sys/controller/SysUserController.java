@@ -3,7 +3,6 @@ package com.jt.sys.controller;
 import com.github.pagehelper.PageInfo;
 import com.jt.common.util.DebugConfig;
 import com.jt.common.vo.JsonResult;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysUser;
 import com.jt.sys.service.SysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -108,4 +110,6 @@ public class SysUserController {
         JsonResult jsonResult = new JsonResult(map,"查询成功");
         return jsonResult;
     }
+
+
 }

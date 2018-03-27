@@ -2,7 +2,6 @@ package com.jt.sys.service;
 
 import com.github.pagehelper.PageInfo;
 import com.jt.common.vo.CheckBox;
-import com.jt.common.vo.PageObject;
 import com.jt.sys.entity.SysRole;
 
 import java.util.List;

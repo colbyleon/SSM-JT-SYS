@@ -12,8 +12,13 @@
                             <button type="button" class="btn btn-default btn-search">
                                 <i class="fa fa-search"></i>
                             </button>
-                            <button type="button" class="btn btn-default btn-add" data-toggle="modal" data-target="#myModal">添加</button>
+                            <button type="button" class="btn btn-default btn-add" data-toggle="modal"
+                                    data-target="#myModal">添加
+                            </button>
                             <button type="button" class="btn btn-default btn-update">修改</button>
+                            <button type="button" class="btn btn-default btn-export" data-toggle="modal"
+                                    data-target=".bs-example-modal-sm">导出表格
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -97,6 +102,29 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade bs-example-modal-sm" id="myModalExport" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="myModalExportLabel">导出文件</h4>
+            </div>
+            <div class="modal-body">
+                <div class="input-group input-group-sm" style="margin: auto">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="button" class="btn btn-primary btn-lg" id="pdfFile" value="0">导出PDF</button>
+                        <button type="button" class="btn btn-success btn-lg" id="excelFile" value="1">导出Excel</button>
+                    </div>
+                    <input id="fileType" type="hidden" value="0">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     $(function () {
         // 页面加载开始加载数据
@@ -117,11 +145,28 @@
         // 模态框隐藏时清空数据
         $("#myModal")
             .on("click", ".btn-save", doSaveOrUpdate)
-            .on("hide.bs.modal",clearModal);
+            .on("hide.bs.modal", clearModal);
+
+        // 文件夹路径模态框
+        $("#myModalExport")
+            .on("click", "#pdfFile, #excelFile", downloadFile)
 
         // 加载用户角色关系复先框
         doLoadSysRoles();
     })
+
+    function downloadFile() {
+        var url;
+        if ($(this).val() == 0) {
+            url = "file/doDownloadPDF.do";
+        } else {
+            url = "file/doDownloadExcel.do";
+        }
+        $.post(url)
+        $("#myModalExport").modal("hide");
+    }
+
+
     // 加载角色信息
     function doLoadSysRoles() {
         var url = "role/doFindObjects.do"
@@ -249,6 +294,7 @@
         })
         $("#myModal").removeData();
     }
+
     // 修改
     function doUpdateObject() {
         // 获取需要修改的用户id
@@ -256,7 +302,7 @@
         // 将数据绑定到模态框
         $("#myModal").data("id", id);
         // 没有选中的用户则返回
-        if(!id){
+        if (!id) {
             alert("请选择一个用户")
             return;
         }
@@ -278,7 +324,7 @@
         $.post(url, {userId: user.id}, function (result) {
             if (result.state == 1) {
                 var roleIds = result.data.roleIds;
-                for(var i in roleIds){
+                for (var i in roleIds) {
                     $("#rolesId input[value='" + roleIds[i] + "']").prop("checked", true);
                 }
             } else {
@@ -327,7 +373,7 @@
         // 获取实体对应的角色关系
         var roleIds = [];
         $("#rolesId input").each(function () {
-            if($(this).prop("checked")){
+            if ($(this).prop("checked")) {
                 roleIds.push($(this).val());
             }
         })

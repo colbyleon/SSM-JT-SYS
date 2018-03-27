@@ -3,6 +3,7 @@ package com.jt.sys.service;
 import com.github.pagehelper.PageInfo;
 import com.jt.sys.entity.SysUser;
 
+import java.util.List;
 import java.util.Map;
 
 public interface SysUserService {
@@ -41,5 +42,10 @@ public interface SysUserService {
      * 处理登陆请求
      */
     void login(String username, String password);
+
+    /**
+     * 导出用户列表
+     */
+    List<SysUser> exportFileData();
 
 }

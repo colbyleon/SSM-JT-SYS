@@ -32,8 +32,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="servlet-api" level="project" />
-    <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper:5.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:0.9.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.3.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.3.9.RELEASE" level="project" />
@@ -82,5 +80,7 @@
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.8.13" level="project" />
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper:5.0.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:0.9.5" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itextpdf:5.5.1" level="project" />
+    <orderEntry type="library" name="Maven: com.itextpdf:itext-asian:5.2.0" level="project" />
   </component>
 </module>
