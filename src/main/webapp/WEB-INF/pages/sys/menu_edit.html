@@ -122,6 +122,10 @@
         var menuId = $(".container-fluid").data("menuId");
         var url = menuId ? "menu/doUpdateObject.do" : "menu/doInsertObject.do";
         var params = doGetParams();
+        if(isNaN(params.sort)){
+            alert("排序号只能是数字")
+            return;
+        }
         if(menuId){
             params.id = menuId;
         }

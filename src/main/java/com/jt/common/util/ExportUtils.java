@@ -7,6 +7,10 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jt.common.exception.ServiceException;
 import com.jt.sys.entity.SysUser;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import java.io.*;
 import java.util.Date;
@@ -84,7 +88,49 @@ public class ExportUtils {
     }
 
 
-    public static byte[] exportExcelPDF(List<SysUser> users) {
-        return null;
+    public static byte[] exportUserExcel(List<SysUser> users) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();  // 字节流
+        try{
+            //得到Excel工作簿对象
+            HSSFWorkbook wb = new HSSFWorkbook();
+            // 创建一张表
+            HSSFSheet sheet = wb.createSheet("用户表");
+            generator(sheet ,users);
+
+            wb.write(out);
+            return out.toByteArray();
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new ServiceException("服务器异常");
+        }
+    }
+
+    private static void generator(HSSFSheet sheet,List<SysUser> users) {
+        HSSFRow headRow = sheet.createRow(0);
+        String[] titles = {"用户ID","用户名","邮箱","手机","状态","创建时间","修改时间","创建用户","修改用户"};
+        for (int i =0 ;i<titles.length;i++) {
+            headRow.createCell(i).setCellValue(titles[i]);
+        }
+
+        // 写入用户数据
+        int i = 1;
+        for(SysUser user:users){
+            // 空值处理
+            String id = user.getId()==null? "":user.getId()+"";
+            String username = user.getUsername()==null? "":user.getUsername()+"";
+            String email = user.getEmail()==null? "":user.getEmail()+"";
+            String mobile = user.getMobile()==null? "":user.getMobile()+"";
+            String valid = 1 == user.getValid()? "启用":"禁用";
+            String ct = user.getCreatedTime()==null? "":user.getCreatedTime().toLocaleString()+"";
+            String mt = user.getModifiedTime()==null? "":user.getModifiedTime().toLocaleString()+"";
+            String cu = user.getCreatedUser()==null? "":user.getCreatedUser()+"";
+            String mu = user.getModifiedUser()==null? "":user.getModifiedUser()+"";
+
+            String[] content = {id,username,email,mobile,valid,ct,mt,cu,mu};
+            HSSFRow row = sheet.createRow(i++);
+            for (int j = 0; j < content.length; j++) {
+                row.createCell(j).setCellValue(content[j]);
+            }
+        }
     }
 }

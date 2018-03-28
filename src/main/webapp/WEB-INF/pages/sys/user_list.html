@@ -16,7 +16,7 @@
                                     data-target="#myModal">添加
                             </button>
                             <button type="button" class="btn btn-default btn-update">修改</button>
-                            <button type="button" class="btn btn-default btn-export" data-toggle="modal"
+                            <button type="button" class="btn btn-info btn-export" data-toggle="modal"
                                     data-target=".bs-example-modal-sm">导出表格
                             </button>
                         </div>
@@ -162,7 +162,7 @@
         } else {
             url = "file/doDownloadExcel.do";
         }
-        $.post(url)
+        window.location.href=url;
         $("#myModalExport").modal("hide");
     }
 

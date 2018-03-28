@@ -44,10 +44,10 @@ public class SysFileController {
             /*从数据库中获取用户数据*/
             List<SysUser> users = sysUserService.exportFileData();
              /*使用工具类将用户数据处理成pdf二进制数据*/
-            byte[] pdfBytes = ExportUtils.exportExcelPDF(users);
+            byte[] pdfBytes = ExportUtils.exportUserExcel(users);
             sendData(response, pdfBytes ,"user_list.xls");
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -56,8 +56,11 @@ public class SysFileController {
         /*重置response*/
         response.reset();
         response.setContentType("text/html;charset=utf-8"); // 设置编码格式并通知浏览器接收utf-8
+        if (fileName.endsWith(".xls")) {
+            response.setContentType("application/vnd.ms-excel");
+        }
         /*设置http头信息的内容,弹出下载框的关键*/
-        response.addHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+        response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
         /*设置文件长度*/
         int fileLength = pdfBytes.length;
         response.setContentLength(fileLength);
@@ -71,4 +74,5 @@ public class SysFileController {
             servletOS.close();
         }
     }
+
 }
