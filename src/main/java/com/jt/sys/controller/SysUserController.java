@@ -10,9 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -38,7 +35,7 @@ public class SysUserController {
      * 返回编辑页面
      */
     @RequestMapping("editUI")
-    public String editUI(){
+    public String editUI() {
         return "sys/user_edit";
     }
 
@@ -59,7 +56,7 @@ public class SysUserController {
      */
     @RequestMapping("doValidById")
     @ResponseBody
-    public JsonResult doValidById(Integer id,Integer valid) {
+    public JsonResult doValidById(Integer id, Integer valid) {
         String modifiedUser = "admin";
         String message = sysUserService.validById(id, valid, modifiedUser);
         JsonResult jsonResult = new JsonResult(message);
@@ -78,13 +75,13 @@ public class SysUserController {
             严重占用系统资源
             开发完成后要关闭
          */
-        if(DebugConfig.DEGUG){
+        if (DebugConfig.DEGUG) {
             System.out.println(entity);
             System.out.println(roleIds);
             log.info(entity.toString());
             log.info(roleIds);
         }
-        String message = sysUserService.insertObject(entity,roleIds);
+        String message = sysUserService.insertObject(entity, roleIds);
         JsonResult jsonResult = new JsonResult(message);
         return jsonResult;
     }
@@ -107,7 +104,7 @@ public class SysUserController {
     @ResponseBody
     public JsonResult doFindObjectById(Integer userId) {
         Map<String, Object> map = sysUserService.findObjectById(userId);
-        JsonResult jsonResult = new JsonResult(map,"查询成功");
+        JsonResult jsonResult = new JsonResult(map, "查询成功");
         return jsonResult;
     }
 
